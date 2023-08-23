@@ -9,7 +9,7 @@
     <Product>PriceProducer</Product>
     <Company />
     <Authors>ambarish.vaidya</Authors>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0.2</Version>
     <Title>MarketDataProducer</Title>
   </PropertyGroup>
 
