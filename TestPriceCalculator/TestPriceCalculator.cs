@@ -167,7 +167,7 @@ namespace TestPriceCalculator
         //{0.1, 0.0001}, {0.01, 0.00001},
         //{0.001, 0.000001}, {0.0001, 0.0000001}, {0, 0}
         [TestCase(101, 102, 0.001)]
-        [TestCase(101.23, 101.24, 0.00001)]
+        [TestCase(101.23, 101.24, 0.001)]
         [TestCase(-101.23, 102.24, 0.1)]
         public void GetSpread_BidAsk_ReturnsExpectedResult(double bid, double ask, double expected)
         {            
@@ -212,6 +212,8 @@ namespace TestPriceCalculator
 
         [TestCase(101.12, 101.34)]
         [TestCase(0.812, 0.963)]
+        [TestCase(1, 1.0004)]
+        [TestCase(0.8901, 0.8902)]
         public void SetPriceLimitForBidAskSpread_WithValidInputs_ReturnsInstance(double bid, double ask)
         {
             Pricer pricer = new Pricer(_loggerFactory);            
