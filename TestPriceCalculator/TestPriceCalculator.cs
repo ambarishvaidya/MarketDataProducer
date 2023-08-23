@@ -153,8 +153,7 @@ namespace TestPriceCalculator
         [TestCase(100, 102, 2, 95, 0)]
         [TestCase(100, 102, 2, 107, 105)]
         [TestCase(0.89, 0.98, 0.9, 0.8, 0)]
-        [TestCase(0.89, 0.98, 0.9, 0, 1)]        
-
+        [TestCase(0.89, 0.98, 0.9, 0, 1)]
         public void ValidatePriceLimit_ForInValidMinMaxData_ReturnsFalse(double bid, double ask, double spread, double min, double max)
         {
             Pricer pricer = new Pricer();
