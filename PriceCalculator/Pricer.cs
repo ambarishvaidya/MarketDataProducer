@@ -6,19 +6,26 @@ public class Pricer : IPricerSetup, IPriceProducer
 {
     internal const int BASIS_POINT = 5;
     internal const int TOLERANCE = 10;
-
-    private readonly double _basisPoint;
+    internal static Dictionary<double, double> DEFAULT_SPREAD = new Dictionary<double, double>()
+    {
+        { 100000, 100}, { 10000, 10}, {1000, 1 }, {100, 0.1 }, {10, 0.01}, {1, 0.001}, {0.1, 0.0001}, {0.01, 0.00001}, {0.001, 0.000001}, {0.0001, 0.0000001}, {0, 0}
+    };
     private readonly double _tolerance;
 
     private ILogger<Pricer> _logger = null;
 
     internal static double GetBasisPointSpread(double bid, double ask)
     {
-        return (Math.Abs(bid - ask))/0.0001;
+        double diff = Math.Abs(bid - ask);
+        double key = DEFAULT_SPREAD.Keys.First(i => i <= diff);
+        return DEFAULT_SPREAD[key];
     }
-    internal static double GetBasisPointSpread(int bps)
+
+    internal static double GetBasisPointSpread(double bid)
     {
-        return bps / 100d / 100d ;
+        double diff = Math.Abs(bid);
+        double key = DEFAULT_SPREAD.Keys.First(i => i <= diff);
+        return DEFAULT_SPREAD[key];
     }
 
     internal Pricer()
