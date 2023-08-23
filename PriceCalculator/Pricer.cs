@@ -43,11 +43,6 @@ public class Pricer : IPricerSetup, IPriceProducer
         return SetPriceLimitForBidAskSpread(bid, ask, GetBasisPointSpread(bid, ask));
     }
 
-    public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, int basisPoint)
-    {
-        return SetPriceLimitForBidAskSpread(bid, ask, GetBasisPointSpread(basisPoint));
-    }
-
     public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, double basisPoint)
     {
         double minInclusive = Math.Min(bid, ask) - _tolerance;
@@ -55,10 +50,6 @@ public class Pricer : IPricerSetup, IPriceProducer
         return SetPriceLimitForBidAskSpreadRange(bid, ask, basisPoint, minInclusive, maxInclusive);
     }
 
-    public PriceLimit SetPriceLimitForBidAskSpreadRange(double bid, double ask, int basisPoint, double minInclusive, double maxInclusive)
-    {
-        return SetPriceLimitForBidAskSpreadRange(bid, ask, GetBasisPointSpread(basisPoint), minInclusive, maxInclusive);
-    }
     public PriceLimit SetPriceLimitForBidAskSpreadRange(double bid, double ask, double basisPoint, double minInclusive, double maxInclusive)
     {
         if (!ValidateLimits(bid, ask, basisPoint, minInclusive, maxInclusive))            
