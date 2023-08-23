@@ -100,12 +100,6 @@ public class Pricer : IPricerSetup, IPriceProducer
             _logger?.LogError($"Bid and Ask must be within the range. Bid: {bid}, Ask: {ask}, MinInclusive: {minInclusive}, MaxInclusive: {maxInclusive}");
             return false;
         }
-        //validate bps is greater or equal to the difference between bid and ask
-        if (bpsAsInt < (int)(Math.Abs(bid - ask) * 10000))//truncating the decimal part for double comparison
-        {
-            _logger?.LogError($"BasisPoint must be greater or equal to the difference between bid and ask. Bid: {bid}, Ask: {ask}, BasisPoint: {basisPoint}");
-            return false;
-        }            
         return 
             true;
     }
