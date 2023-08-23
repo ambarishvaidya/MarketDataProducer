@@ -69,8 +69,7 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     internal bool ValidateLimits(double bid, double ask, double basisPoint, double minInclusive, double maxInclusive)
     {
-        int bpsAsInt = (int)(basisPoint * 10000);//loosing the decimal part of the bps
-        if (bpsAsInt <= 0)
+        if(basisPoint <= 0)
         {
             _logger?.LogError($"BasisPoint must be greater than 0. BasisPoint: {basisPoint}");
             return false;
