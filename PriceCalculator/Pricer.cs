@@ -29,7 +29,6 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     internal Pricer()
     {
-        _basisPoint = GetBasisPointSpread(BASIS_POINT);
         _tolerance = TOLERANCE / 100d;              
     }
 
