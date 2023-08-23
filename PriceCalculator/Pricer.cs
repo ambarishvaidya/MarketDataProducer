@@ -13,14 +13,14 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     private ILogger<Pricer> _logger = null;
 
-    internal static double GetBasisPointSpread(double bid, double ask)
+    internal static double GetSpread(double bid, double ask)
     {
         double diff = Math.Abs(bid - ask);
         double key = DEFAULT_SPREAD.Keys.First(i => i <= diff);
         return DEFAULT_SPREAD[key];
     }
 
-    internal static double GetBasisPointSpread(double bid)
+    internal static double GetSpread(double bid)
     {
         double diff = Math.Abs(bid);
         double key = DEFAULT_SPREAD.Keys.First(i => i <= diff);
@@ -39,35 +39,36 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     public PriceLimit SetPriceLimitForBid(double bid) 
     {
-        return SetPriceLimitForBidAskSpread(bid, bid + _basisPoint, _basisPoint);
+        double spread = GetSpread(bid);
+        return SetPriceLimitForBidAskSpread(bid, bid + spread, spread);
     }
 
     public PriceLimit SetPriceLimitForBidAsk(double bid, double ask)
     {
 
-        return SetPriceLimitForBidAskSpread(bid, ask, GetBasisPointSpread(bid, ask));
-    }
+        return SetPriceLimitForBidAskSpread(bid, ask, GetSpread(bid, ask));
+    }    
 
-    public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, double basisPoint)
+    public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, double spread)
     {
         double minInclusive = Math.Min(bid, ask) - _tolerance;
         double maxInclusive = Math.Max(bid, ask) + _tolerance;
-        return SetPriceLimitForBidAskSpreadRange(bid, ask, basisPoint, minInclusive, maxInclusive);
+        return SetPriceLimitForBidAskSpreadRange(bid, ask, spread, minInclusive, maxInclusive);
     }
 
-    public PriceLimit SetPriceLimitForBidAskSpreadRange(double bid, double ask, double basisPoint, double minInclusive, double maxInclusive)
+    public PriceLimit SetPriceLimitForBidAskSpreadRange(double bid, double ask, double spread, double minInclusive, double maxInclusive)
     {
-        if (!ValidateLimits(bid, ask, basisPoint, minInclusive, maxInclusive))            
+        if (!ValidateLimits(bid, ask, spread, minInclusive, maxInclusive))            
             return null;            
 
-        return new PriceLimit(bid, ask, basisPoint, minInclusive, maxInclusive);
+        return new PriceLimit(bid, ask, spread, minInclusive, maxInclusive);
     }
 
-    internal bool ValidateLimits(double bid, double ask, double basisPoint, double minInclusive, double maxInclusive)
-    {
-        if(basisPoint <= 0)
+    internal bool ValidateLimits(double bid, double ask, double spread, double minInclusive, double maxInclusive)
+    {        
+        if(spread <= 0)
         {
-            _logger?.LogError($"BasisPoint must be greater than 0. BasisPoint: {basisPoint}");
+            _logger?.LogError($"Spread must be greater than 0. Spread: {spread}");
             return false;
         }
         if (minInclusive <= 0 || maxInclusive <= 0)
@@ -84,12 +85,12 @@ public class Pricer : IPricerSetup, IPriceProducer
         {
             _logger?.LogError($"Bid and Ask must be greater than 0. Bid: {bid}, Ask: {ask}");
             return false;
-        }
+        }        
         if (bid < minInclusive || bid > maxInclusive || ask < minInclusive || ask > maxInclusive)
         {
             _logger?.LogError($"Bid and Ask must be within the range. Bid: {bid}, Ask: {ask}, MinInclusive: {minInclusive}, MaxInclusive: {maxInclusive}");
             return false;
-        }
+        }        
         return 
             true;
     }
@@ -123,31 +124,31 @@ public class Pricer : IPricerSetup, IPriceProducer
             if (tempBid < priceLimit.MinInclusive)
                 tempBid = priceLimit.MinInclusive;
             else if (tempBid > priceLimit.MaxInclusive)
-                tempBid = priceLimit.MaxInclusive - priceLimit.BasisSpread;                
+                tempBid = priceLimit.MaxInclusive - priceLimit.Spread;                
             
-            //case 1: bid is greater than ask, then ask = bid + basis point
+            //case 1: bid is greater than ask, then ask = bid + spread
             if(tempBid >= tempAsk)
-                tempAsk = tempBid + priceLimit.BasisSpread;
-            //case 2: bid is less than ask more than basis point, then ask = bid + basis point
-            else if (tempBid < tempAsk && tempAsk - tempBid > priceLimit.BasisSpread)
-                tempAsk = tempBid + priceLimit.BasisSpread;
-            //case 2: bid is less than ask and ask - bid is within or equal to basis point, do nothing.
+                tempAsk = tempBid + priceLimit.Spread;
+            //case 2: bid is less than ask more than spread, then ask = bid + spread
+            else if (tempBid < tempAsk && tempAsk - tempBid > priceLimit.Spread)
+                tempAsk = tempBid + priceLimit.Spread;
+            //case 2: bid is less than ask and ask - bid is within or equal to spread, do nothing.
         }
         else
         {
             tempAsk += random;
             if (tempAsk < priceLimit.MinInclusive)
-                tempAsk = priceLimit.MinInclusive + priceLimit.BasisSpread;
+                tempAsk = priceLimit.MinInclusive + priceLimit.Spread;
             else if (tempAsk > priceLimit.MaxInclusive)
                 tempAsk = priceLimit.MaxInclusive;
 
-            //case 1: bid is greater than ask, then ask = bid + basis point
+            //case 1: bid is greater than ask, then ask = bid + spread
             if (tempBid >= tempAsk)
-                tempBid = tempAsk - priceLimit.BasisSpread;
-            //case 2: bid is less than ask more than basis point, then bid = ask + basis point
-            else if (tempBid < tempAsk && tempAsk - tempBid > priceLimit.BasisSpread)
-                tempBid = tempAsk - priceLimit.BasisSpread;
-            //case 2: bid is less than ask and ask - bid is within or equal to basis point, do nothing.
+                tempBid = tempAsk - priceLimit.Spread;
+            //case 2: bid is less than ask more than spread, then bid = ask + spread
+            else if (tempBid < tempAsk && tempAsk - tempBid > priceLimit.Spread)
+                tempBid = tempAsk - priceLimit.Spread;
+            //case 2: bid is less than ask and ask - bid is within or equal to spread, do nothing.
         }
         rates[0] = tempBid;
         rates[1] = tempAsk;
