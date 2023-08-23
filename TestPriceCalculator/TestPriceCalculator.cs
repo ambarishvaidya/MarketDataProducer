@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using PriceProducer;
+using System.Security.Cryptography;
 
 namespace TestPriceCalculator
 {
@@ -206,6 +207,28 @@ namespace TestPriceCalculator
         {
             Pricer pricer = new Pricer(_loggerFactory);
             var resp = pricer.SetPriceLimitForBid(bid);
+            Assert.That(resp, Is.Null);            
+        }
+
+        [TestCase(101.12, 101.34)]
+        [TestCase(0.812, 0.963)]
+        public void SetPriceLimitForBidAskSpread_WithValidInputs_ReturnsInstance(double bid, double ask)
+        {
+            Pricer pricer = new Pricer(_loggerFactory);            
+            double min = bid - (bid * 0.1);
+            double max = ask + (ask * 0.1);
+            var resp = pricer.SetPriceLimitForBidAsk(bid, ask);
+            Assert.That(resp, Is.Not.Null);
+            Assert.That(resp.MinInclusive, Is.EqualTo(min).Within(EPSILON));
+            Assert.That(resp.MaxInclusive, Is.EqualTo(max).Within(EPSILON));
+        }
+
+        [TestCase(101.12, 0)]
+        [TestCase(0.812, -0.963)]
+        public void SetPriceLimitForBidAskSpread_WithInValidInputs_ReturnsInstance(double bid, double ask)
+        {
+            Pricer pricer = new Pricer(_loggerFactory);            
+            var resp = pricer.SetPriceLimitForBidAsk(bid, ask);
             Assert.That(resp, Is.Null);            
         }
     }
