@@ -135,5 +135,18 @@ namespace TestPriceCalculator
             Assert.That(newBid, Is.EqualTo(rates[0]).Within(EPSILON));
             Assert.That(rates[1], Is.EqualTo(newAsk).Within(EPSILON));
         }
+
+
+        [TestCase(new double[] { 100, 101 }, 0.4, true, 100.4, 101)]
+        [TestCase(new double[] { 100, 101 }, -0.4, true, 99.6, 101)]
+        [TestCase(new double[] { 100, 101 }, 0.4, false, 100, 101.4)]
+        [TestCase(new double[] { 100, 101 }, -0.4, false, 100, 100.6)]
+        public void NextPrice_WhenPriceLimitIsNull_ReturnsExpexctedResult(double[] rates, double random, bool addToBid, double newBid, double newAsk)
+        {
+            Pricer pricer = new Pricer();            
+            pricer.NextPrice(rates, random, addToBid, null);
+            Assert.That(newBid, Is.EqualTo(rates[0]).Within(EPSILON));
+            Assert.That(rates[1], Is.EqualTo(newAsk).Within(EPSILON));
+        }
     }
 }
