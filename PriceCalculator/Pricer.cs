@@ -4,12 +4,12 @@ namespace PriceProducer;
 
 public class Pricer : IPricerSetup, IPriceProducer
 {
-    internal const int TOLERANCE = 10;
+    internal const int MARGIN = 10;
     internal static Dictionary<double, double> DEFAULT_SPREAD = new Dictionary<double, double>()
     {
         { 100000, 100}, { 10000, 10}, {1000, 1 }, {100, 0.1 }, {10, 0.01}, {1, 0.001}, {0.1, 0.0001}, {0.01, 0.00001}, {0.001, 0.000001}, {0.0001, 0.0000001}, {0, 0}
     };
-    private readonly double _tolerance;
+    private readonly double _pctMargin;
 
     private ILogger<Pricer> _logger = null;
 
@@ -29,7 +29,7 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     internal Pricer()
     {
-        _tolerance = TOLERANCE / 100d;              
+        _pctMargin = MARGIN / 100d;              
     }
 
     public Pricer(ILoggerFactory loggerFactory) : this()
@@ -51,8 +51,10 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, double spread)
     {
-        double minInclusive = Math.Min(bid, ask) - _tolerance;
-        double maxInclusive = Math.Max(bid, ask) + _tolerance;
+        double min = Math.Min(bid, ask);
+        double max = Math.Max(bid, ask);
+        double minInclusive = min - (min * _pctMargin);
+        double maxInclusive = max + (max * _pctMargin);
         return SetPriceLimitForBidAskSpreadRange(bid, ask, spread, minInclusive, maxInclusive);
     }
 
