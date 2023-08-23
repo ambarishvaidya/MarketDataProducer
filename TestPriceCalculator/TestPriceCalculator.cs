@@ -159,6 +159,28 @@ namespace TestPriceCalculator
             Pricer pricer = new Pricer();
             var resp = pricer.ValidateLimits(bid, ask, spread, min, max);
             Assert.IsFalse(resp);
+        }   
+    
+        //{ 100000, 100}, { 10000, 10}, {1000, 1 },
+        //{100, 0.1 }, {10, 0.01}, {1, 0.001},
+        //{0.1, 0.0001}, {0.01, 0.00001},
+        //{0.001, 0.000001}, {0.0001, 0.0000001}, {0, 0}
+        [TestCase(101, 102, 0.001)]
+        [TestCase(101.23, 101.24, 0.00001)]
+        [TestCase(-101.23, 102.24, 0.1)]
+        public void GetSpread_BidAsk_ReturnsExpectedResult(double bid, double ask, double expected)
+        {            
+            var resp = Pricer.GetSpread(bid, ask);
+            Assert.That(resp, Is.EqualTo(expected).Within(EPSILON));
+        }
+
+        [TestCase(101, 0.1)]
+        [TestCase(101.23, 0.1)]
+        [TestCase(-101.23, 0.1)]
+        public void GetSpread_Bid_ReturnsExpectedResult(double bid, double expected)
+        {
+            var resp = Pricer.GetSpread(bid);
+            Assert.That(resp, Is.EqualTo(expected).Within(EPSILON));
         }
     }
 }
