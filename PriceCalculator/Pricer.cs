@@ -4,7 +4,6 @@ namespace PriceProducer;
 
 public class Pricer : IPricerSetup, IPriceProducer
 {
-    internal const int BASIS_POINT = 5;
     internal const int TOLERANCE = 10;
     internal static Dictionary<double, double> DEFAULT_SPREAD = new Dictionary<double, double>()
     {
