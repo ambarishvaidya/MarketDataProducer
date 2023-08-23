@@ -90,11 +90,6 @@ public class Pricer : IPricerSetup, IPriceProducer
             _logger?.LogError($"Bid and Ask must be greater than 0. Bid: {bid}, Ask: {ask}");
             return false;
         }
-        if (bid >= ask)
-        {
-            _logger?.LogError($"Bid must be less than Ask. Bid: {bid}, Ask: {ask}");
-            return false;
-        }            
         if (bid < minInclusive || bid > maxInclusive || ask < minInclusive || ask > maxInclusive)
         {
             _logger?.LogError($"Bid and Ask must be within the range. Bid: {bid}, Ask: {ask}, MinInclusive: {minInclusive}, MaxInclusive: {maxInclusive}");
