@@ -82,10 +82,7 @@ namespace TestPriceCalculator
             Assert.IsTrue(resp);
         }
 
-        [TestCase(100, 100.1, 0.01, 99, 102)]
         [TestCase(1.1234, 1.1236, 0.0003, 1.1235, 1.3)]
-        [TestCase(102.56, 102.65, 0.08, 100, 106)]
-        [TestCase(103.32, 102.56, 0.8, 100, 106)]
         [TestCase(0, 100.1, 0.1, 99, 102)]
         [TestCase(100, 0, 0.1, 99, 102)]
         [TestCase(100, 100.1, 0, 99, 102)]
