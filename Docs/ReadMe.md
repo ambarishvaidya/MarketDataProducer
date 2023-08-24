@@ -73,13 +73,13 @@ PriceLimit pricerLimit = pricer.SetPriceLimitForBidAskSpreadRange(120.1234, 120.
 double[] rates = new double[] {120.1234, 120.1238};
 
 Random random = new Random();
-double variattion = random.NextDouble()/100/2; //Just a create a fraction.
-pricer.NextPrice(rates, fraction, true, pricerLimit);
-Console.Writeline($"Next Tick - {rates[0]}, {rates[1]});
+double variation = random.NextDouble()/100/2; //Just a create a fraction.
+pricer.NextPrice(rates, variation, true, pricerLimit);
+Console.WriteLine($"Next Tick - {rates[0]}, {rates[1]}");
 
 //Passing a hard coded fraction
 pricer.NextPrice(rates, -0.002356, true, pricerLimit);
-Console.Writeline($"Next Tick - {rates[0]}, {rates[1]});
+Console.WriteLine($"Next Tick - {rates[0]}, {rates[1]}");
 ```
     
 
