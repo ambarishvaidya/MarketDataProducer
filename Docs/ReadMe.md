@@ -57,3 +57,29 @@ Here
 - random: is a variation that suggests move in Bid or Ask passed in double. The variation can be positive or negative.
 - addToBid: is a boolean that dictates if random is added to Bid or Ask.
 - priceLimit: if not null performs checks and adjustments on the new data post adding the random number.   
+
+## Quick Start Console code
+
+Create a console application. Add Microsoft.Extensions for logging and console and PriceProducer nuget packages.
+```c#
+//Create Pricer  
+ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddSimpleConsole());
+Pricer pricer = new Pricer(loggerFactory);
+
+//Get PriceLimit
+PriceLimit pricerLimit = pricer.SetPriceLimitForBidAskSpreadRange(120.1234, 120.1238, 0.01, 119.8863, 121.4125);
+
+//Get Next Tick
+double[] rates = new double[] {120.1234, 120.1238};
+
+Random random = new Random();
+double variattion = random.NextDouble()/100/2; //Just a create a fraction.
+pricer.NextPrice(rates, fraction, true, pricerLimit);
+Console.Writeline($"Next Tick - {rates[0]}, {rates[1]});
+
+//Passing a hard coded fraction
+pricer.NextPrice(rates, -0.002356, true, pricerLimit);
+Console.Writeline($"Next Tick - {rates[0]}, {rates[1]});
+```
+    
+
