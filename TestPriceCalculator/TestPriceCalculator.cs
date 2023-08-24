@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using PriceProducer;
-using System.Security.Cryptography;
 
 namespace TestPriceCalculator
 {
@@ -144,7 +143,7 @@ namespace TestPriceCalculator
         [TestCase(new double[] { 100, 101 }, -0.4, false, 100, 100.6)]
         public void NextPrice_WhenPriceLimitIsNull_ReturnsExpexctedResult(double[] rates, double random, bool addToBid, double newBid, double newAsk)
         {
-            Pricer pricer = new Pricer();            
+            Pricer pricer = new Pricer();
             pricer.NextPrice(rates, random, addToBid, null);
             Assert.That(newBid, Is.EqualTo(rates[0]).Within(EPSILON));
             Assert.That(rates[1], Is.EqualTo(newAsk).Within(EPSILON));
@@ -160,8 +159,8 @@ namespace TestPriceCalculator
             Pricer pricer = new Pricer();
             var resp = pricer.ValidateLimits(bid, ask, spread, min, max);
             Assert.IsFalse(resp);
-        }   
-    
+        }
+
         //{ 100000, 100}, { 10000, 10}, {1000, 1 },
         //{100, 0.1 }, {10, 0.01}, {1, 0.001},
         //{0.1, 0.0001}, {0.01, 0.00001},
@@ -170,7 +169,7 @@ namespace TestPriceCalculator
         [TestCase(101.23, 101.24, 0.001)]
         [TestCase(-101.23, 102.24, 0.1)]
         public void GetSpread_BidAsk_ReturnsExpectedResult(double bid, double ask, double expected)
-        {            
+        {
             var resp = Pricer.GetSpread(bid, ask);
             Assert.That(resp, Is.EqualTo(expected).Within(EPSILON));
         }
@@ -193,12 +192,12 @@ namespace TestPriceCalculator
             double ask = bid + spread;
             double min = bid - (bid * 0.1);
             double max = ask + (ask * 0.1);
-            
+
             var resp = pricer.SetPriceLimitForBid(bid);
             Assert.That(resp, Is.Not.Null);
             Assert.That(resp.Spread, Is.EqualTo(spread).Within(EPSILON));
             Assert.That(resp.MinInclusive, Is.EqualTo(min).Within(EPSILON));
-            Assert.That(resp.MaxInclusive, Is.EqualTo(max).Within(EPSILON));            
+            Assert.That(resp.MaxInclusive, Is.EqualTo(max).Within(EPSILON));
         }
 
         [TestCase(0)]
@@ -207,7 +206,7 @@ namespace TestPriceCalculator
         {
             Pricer pricer = new Pricer(_loggerFactory);
             var resp = pricer.SetPriceLimitForBid(bid);
-            Assert.That(resp, Is.Null);            
+            Assert.That(resp, Is.Null);
         }
 
         [TestCase(101.12, 101.34)]
@@ -216,7 +215,7 @@ namespace TestPriceCalculator
         [TestCase(0.8901, 0.8902)]
         public void SetPriceLimitForBidAskSpread_WithValidInputs_ReturnsInstance(double bid, double ask)
         {
-            Pricer pricer = new Pricer(_loggerFactory);            
+            Pricer pricer = new Pricer(_loggerFactory);
             double min = bid - (bid * 0.1);
             double max = ask + (ask * 0.1);
             var resp = pricer.SetPriceLimitForBidAsk(bid, ask);
@@ -229,9 +228,9 @@ namespace TestPriceCalculator
         [TestCase(0.812, -0.963)]
         public void SetPriceLimitForBidAskSpread_WithInValidInputs_ReturnsInstance(double bid, double ask)
         {
-            Pricer pricer = new Pricer(_loggerFactory);            
+            Pricer pricer = new Pricer(_loggerFactory);
             var resp = pricer.SetPriceLimitForBidAsk(bid, ask);
-            Assert.That(resp, Is.Null);            
+            Assert.That(resp, Is.Null);
         }
     }
 }

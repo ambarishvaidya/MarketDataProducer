@@ -2,5 +2,5 @@
 
 public interface IPriceProducer
 {
-    void NextPrice(double[] rates, double random, bool addToBid, PriceLimit priceLimit);    
+    void NextPrice(double[] rates, double random, bool addToBid, PriceLimit priceLimit);
 }

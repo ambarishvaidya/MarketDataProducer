@@ -29,7 +29,7 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     internal Pricer()
     {
-        _pctMargin = MARGIN / 100d;              
+        _pctMargin = MARGIN / 100d;
     }
 
     public Pricer(ILoggerFactory loggerFactory) : this()
@@ -37,7 +37,7 @@ public class Pricer : IPricerSetup, IPriceProducer
         _logger = loggerFactory.CreateLogger<Pricer>();
     }
 
-    public PriceLimit SetPriceLimitForBid(double bid) 
+    public PriceLimit SetPriceLimitForBid(double bid)
     {
         double spread = GetSpread(bid);
         return SetPriceLimitForBidAskSpread(bid, bid + spread, spread);
@@ -47,7 +47,7 @@ public class Pricer : IPricerSetup, IPriceProducer
     {
 
         return SetPriceLimitForBidAskSpread(bid, ask, GetSpread(bid, ask));
-    }    
+    }
 
     public PriceLimit SetPriceLimitForBidAskSpread(double bid, double ask, double spread)
     {
@@ -60,15 +60,15 @@ public class Pricer : IPricerSetup, IPriceProducer
 
     public PriceLimit SetPriceLimitForBidAskSpreadRange(double bid, double ask, double spread, double minInclusive, double maxInclusive)
     {
-        if (!ValidateLimits(bid, ask, spread, minInclusive, maxInclusive))            
-            return null;            
+        if (!ValidateLimits(bid, ask, spread, minInclusive, maxInclusive))
+            return null;
 
         return new PriceLimit(bid, ask, spread, minInclusive, maxInclusive);
     }
 
     internal bool ValidateLimits(double bid, double ask, double spread, double minInclusive, double maxInclusive)
-    {        
-        if(spread <= 0)
+    {
+        if (spread <= 0)
         {
             _logger?.LogError($"Spread must be greater than 0. Spread: {spread}");
             return false;
@@ -87,13 +87,13 @@ public class Pricer : IPricerSetup, IPriceProducer
         {
             _logger?.LogError($"Bid and Ask must be greater than 0. Bid: {bid}, Ask: {ask}");
             return false;
-        }        
+        }
         if (bid < minInclusive || bid > maxInclusive || ask < minInclusive || ask > maxInclusive)
         {
             _logger?.LogError($"Bid and Ask must be within the range. Bid: {bid}, Ask: {ask}, MinInclusive: {minInclusive}, MaxInclusive: {maxInclusive}");
             return false;
-        }        
-        return 
+        }
+        return
             true;
     }
 
@@ -108,9 +108,9 @@ public class Pricer : IPricerSetup, IPriceProducer
     /// <param name="priceLimit">PriceLimit having boundaries for range and spread for next tick</param>
     public void NextPrice(double[] rates, double random, bool addToBid, PriceLimit priceLimit)
     {
-        if(priceLimit == null)
+        if (priceLimit == null)
         {
-            if(addToBid)
+            if (addToBid)
                 rates[0] += random;
             else
                 rates[1] += random;
@@ -126,10 +126,10 @@ public class Pricer : IPricerSetup, IPriceProducer
             if (tempBid < priceLimit.MinInclusive)
                 tempBid = priceLimit.MinInclusive;
             else if (tempBid > priceLimit.MaxInclusive)
-                tempBid = priceLimit.MaxInclusive - priceLimit.Spread;                
-            
+                tempBid = priceLimit.MaxInclusive - priceLimit.Spread;
+
             //case 1: bid is greater than ask, then ask = bid + spread
-            if(tempBid >= tempAsk)
+            if (tempBid >= tempAsk)
                 tempAsk = tempBid + priceLimit.Spread;
             //case 2: bid is less than ask more than spread, then ask = bid + spread
             else if (tempBid < tempAsk && tempAsk - tempBid > priceLimit.Spread)
